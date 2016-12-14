@@ -1,10 +1,9 @@
 const departmentCodeMapping = require('./departmentCodeMapping')
-const config = require('./server/init/configuration')
-const canvasApi = require('./canvasApi')(config.full.canvas.apiUrl, config.secure.canvas.apiKey)
 const moment = require('moment')
 
-const subAccounts = canvasApi.getRootAccount()
-  .then(canvasApi.listSubaccounts)
+let canvasApi
+
+let subAccounts
 
 function _courseTerm (courseRoundObj) {
   const startTerm = courseRoundObj.courseRound.$.startTerm
@@ -38,7 +37,18 @@ function _wrapWithCourseRound (courseObj, courseRoundObj) {
 }
 
 module.exports = {
+  init(canvasApiUrl, canvasapiKey){
+    canvasApi = require('canvas-api')(canvasApiUrl, canvasapiKey)
+    subAccounts = canvasApi.getRootAccount()
+      .then(canvasApi.listSubaccounts)
+  },
+
   createCanvasCourseObject({course, courseRound}) {
+    if(!canvasApi){
+      console.error('No canvas api set. Call init() first')
+      return
+    }
+
   const wrappedCourseObj = _wrapWithCourseRound(course, courseRound)
   const departmentCode = course.course.departmentCode[0]._
   const firstChar = departmentCode[0]
