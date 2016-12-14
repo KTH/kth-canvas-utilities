@@ -86,8 +86,7 @@ function createCanvasCourseObject ({course, courseRound}) {
   .then(subAccounts => subAccounts.find(subAccount => subAccount.name === mappedDepartmentCode))
   .then(subAccount => canvasApi.listSubaccounts(subAccount.id))
   .then(subAccounts => subAccounts.find(subAccount => subAccount.name === 'Imported course rounds'))
-  .then(subAccount => subAccount.id)
-  .then(subAccountId => ({course: wrappedCourseObj, subAccountId}))
+  .then(subAccount => ({course: wrappedCourseObj, subAccountId:subAccount.id, subAccount}))
 }
 
 function init (canvasApiUrl, canvasapiKey) {
