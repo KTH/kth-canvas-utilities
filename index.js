@@ -16,7 +16,7 @@ function _courseTerm (courseRoundObj) {
 function _createTitle (courseObj, courseRoundObj, xmlLang) {
   const courseTitle = courseObj.course.title.find(title => title.$['xml:lang'] === xmlLang)._
   const term = _courseTerm(courseRoundObj)
-  return `${courseTitle} ${term}`
+  return ` ${term} ${courseTitle}`
 }
 
 function _wrapWithCourseRound (courseObj, courseRoundObj) {
