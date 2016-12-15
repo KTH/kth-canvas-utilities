@@ -39,7 +39,7 @@ function _wrapWithCourseRound (courseObj, courseRoundObj) {
 }
 function getCourseFromKopps (courseCode) {
   const url = `http://www.kth.se/api/kopps/v1/course/${courseCode}`
-  console.log('get course from kopps', url)
+  // console.log('get course from kopps', url)
   return rp({
     url,
     method: 'GET'
@@ -48,7 +48,7 @@ function getCourseFromKopps (courseCode) {
 
 function getCourseRoundFromKopps (courseCode, startTerm, round) {
   const url = `http://www.kth.se/api/kopps/v1/course/${courseCode}/round/${startTerm}/${round}`
-  console.log('get course round from kopps', url)
+  // console.log('get course round from kopps', url)
 
   return rp({
     url,
@@ -58,7 +58,6 @@ function getCourseRoundFromKopps (courseCode, startTerm, round) {
 
 function getCourseAndCourseRoundFromKopps ({courseCode, startTerm, round}) {
   let course, courseRound, canvasCourse
-  console.log('courseCode, startTerm, round}', courseCode, startTerm, round)
   return getCourseFromKopps(courseCode)
     .then(parseStringP)
     .then(_course => course = _course)
@@ -80,12 +79,12 @@ function createCanvasCourseObject ({course, courseRound}) {
   const departmentCode = course.course.departmentCode[0]._
   const firstChar = departmentCode[0]
   const mappedDepartmentCode = departmentCodeMapping[firstChar]
-
+  const shortName = courseRound.courseRound.shortName && courseRound.courseRound.shortName[0]._
   return subAccounts
   .then(subAccounts => subAccounts.find(subAccount => subAccount.name === mappedDepartmentCode))
   .then(subAccount => canvasApi.listSubaccounts(subAccount.id))
   .then(subAccounts => subAccounts.find(subAccount => subAccount.name === 'Imported course rounds'))
-  .then(subAccount => ({course: wrappedCourseObj, subAccountId:subAccount.id, subAccount, courseRound:courseRound.courseRound.$}))
+  .then(subAccount => ({course: wrappedCourseObj, subAccountId:subAccount.id, subAccount, courseRound:courseRound.courseRound.$, shortName}))
 }
 
 function init (canvasApiUrl, canvasapiKey) {
