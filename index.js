@@ -37,7 +37,6 @@ function _wrapWithCourseRound (courseObj, courseRoundObj) {
   const course = {name, course_code, sis_course_id, start_at}
   return {course}
 }
-
 function getCourseFromKopps (courseCode) {
   const url = `http://www.kth.se/api/kopps/v1/course/${courseCode}`
   console.log('get course from kopps', url)
@@ -86,7 +85,7 @@ function createCanvasCourseObject ({course, courseRound}) {
   .then(subAccounts => subAccounts.find(subAccount => subAccount.name === mappedDepartmentCode))
   .then(subAccount => canvasApi.listSubaccounts(subAccount.id))
   .then(subAccounts => subAccounts.find(subAccount => subAccount.name === 'Imported course rounds'))
-  .then(subAccount => ({course: wrappedCourseObj, subAccountId:subAccount.id, subAccount}))
+  .then(subAccount => ({course: wrappedCourseObj, subAccountId:subAccount.id, subAccount, courseRound:courseRound.courseRound.$}))
 }
 
 function init (canvasApiUrl, canvasapiKey) {
