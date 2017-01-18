@@ -69,7 +69,7 @@ function getCourseAndCourseRoundFromKopps ({courseCode, startTerm, round}) {
     })
 }
 
-function createCanvasCourseObject ({course, courseRound}) {
+function _createCanvasCourseObject ({course, courseRound}) {
   if (!canvasApi) {
     console.error('No canvas api set. Call init() first')
     return
@@ -87,6 +87,32 @@ function createCanvasCourseObject ({course, courseRound}) {
   .then(subAccount => ({course: wrappedCourseObj, subAccountId:subAccount.id, subAccount, courseRound:courseRound.courseRound.$, shortName}))
 }
 
+function createCanvasCourseObject ({course, courseRound}) {
+  const wrappedCourseObj = _wrapWithCourseRound(course, courseRound)
+  const departmentCode = course.course.departmentCode[0]._
+  const firstChar = departmentCode[0]
+  const mappedDepartmentCode = departmentCodeMapping[firstChar]
+  const shortName = courseRound.courseRound.shortName && courseRound.courseRound.shortName[0]._
+  return subAccounts
+  .then(subAccounts => {
+    console.log(subAccounts[0].name, mappedDepartmentCode)
+    return subAccounts.find(subAccount => subAccount.name === mappedDepartmentCode)
+  })
+  .then(subAccount => canvasApi.listSubaccounts(subAccount.id))
+  .then(subAccounts => subAccounts.find(subAccount => subAccount.name === 'Imported course rounds'))
+  .then(subAccount => ({course: wrappedCourseObj, subAccountId:subAccount.id, subAccount, courseRound:courseRound.courseRound.$, shortName}))
+}
+
+function createSimpleCanvasCourseObject ({course, courseRound}) {
+  const wrappedCourseObj = _wrapWithCourseRound(course, courseRound)
+  const departmentCode = course.course.departmentCode[0]._
+  const firstChar = departmentCode[0]
+  const mappedDepartmentCode = departmentCodeMapping[firstChar]
+  const shortName = courseRound.courseRound.shortName && courseRound.courseRound.shortName[0]._
+  const sisAccountId = `${mappedDepartmentCode} - Imported course rounds`
+  return {course: wrappedCourseObj, sisAccountId, courseRound:courseRound.courseRound.$, shortName}
+}
+
 function init (canvasApiUrl, canvasapiKey) {
   canvasApi = require('canvas-api')(canvasApiUrl, canvasapiKey)
   subAccounts = canvasApi.getRootAccount()
@@ -96,4 +122,5 @@ function init (canvasApiUrl, canvasapiKey) {
 module.exports = {
   getCourseAndCourseRoundFromKopps,
   init,
-  createCanvasCourseObject}
+  createCanvasCourseObject,
+createSimpleCanvasCourseObject}
