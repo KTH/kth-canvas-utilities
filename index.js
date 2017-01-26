@@ -114,7 +114,8 @@ function createSimpleCanvasCourseObject ({course, courseRound}) {
 }
 
 function init (canvasApiUrl, canvasapiKey) {
-  canvasApi = require('canvas-api')(canvasApiUrl, canvasapiKey)
+  const CanvasApi = require('canvas-api')
+  canvasApi = new CanvasApi(canvasApiUrl, canvasapiKey)
   subAccounts = canvasApi.getRootAccount()
     .then(canvasApi.listSubaccounts)
 }
