@@ -5,8 +5,6 @@ const parseStringP = Promise.promisify(require('xml2js').parseString)
 const rp = require('request-promise')
 let canvasApi
 
-let subAccounts
-
 function _courseTerm (courseRoundObj) {
   const startTerm = courseRoundObj.courseRound.$.startTerm
   const startTermCanonical = startTerm[4] === '1' ? 'VT' : 'HT'
@@ -80,11 +78,12 @@ function _createCanvasCourseObject ({course, courseRound}) {
   const firstChar = departmentCode[0]
   const mappedDepartmentCode = departmentCodeMapping[firstChar]
   const shortName = courseRound.courseRound.shortName && courseRound.courseRound.shortName[0]._
-  return subAccounts
+  return canvasApi.getRootAccount()
+  .then(canvasApi.listSubaccounts)
   .then(subAccounts => subAccounts.find(subAccount => subAccount.name === mappedDepartmentCode))
   .then(subAccount => canvasApi.listSubaccounts(subAccount.id))
   .then(subAccounts => subAccounts.find(subAccount => subAccount.name === 'Imported course rounds'))
-  .then(subAccount => ({course: wrappedCourseObj, subAccountId:subAccount.id, subAccount, courseRound:courseRound.courseRound.$, shortName}))
+  .then(subAccount => ({course: wrappedCourseObj, subAccountId: subAccount.id, subAccount, courseRound: courseRound.courseRound.$, shortName}))
 }
 
 function createCanvasCourseObject ({course, courseRound}) {
@@ -93,14 +92,12 @@ function createCanvasCourseObject ({course, courseRound}) {
   const firstChar = departmentCode[0]
   const mappedDepartmentCode = departmentCodeMapping[firstChar]
   const shortName = courseRound.courseRound.shortName && courseRound.courseRound.shortName[0]._
-  return subAccounts
-  .then(subAccounts => {
-    console.log(subAccounts[0].name, mappedDepartmentCode)
-    return subAccounts.find(subAccount => subAccount.name === mappedDepartmentCode)
-  })
+  return canvasApi.getRootAccount()
+  .then(canvasApi.listSubaccounts)
+  .then(subAccounts => subAccounts.find(subAccount => subAccount.name === mappedDepartmentCode))
   .then(subAccount => canvasApi.listSubaccounts(subAccount.id))
   .then(subAccounts => subAccounts.find(subAccount => subAccount.name === 'Imported course rounds'))
-  .then(subAccount => ({course: wrappedCourseObj, subAccountId:subAccount.id, subAccount, courseRound:courseRound.courseRound.$, shortName}))
+  .then(subAccount => ({course: wrappedCourseObj, subAccountId: subAccount.id, subAccount, courseRound: courseRound.courseRound.$, shortName}))
 }
 
 function createSimpleCanvasCourseObject ({course, courseRound}) {
@@ -110,18 +107,16 @@ function createSimpleCanvasCourseObject ({course, courseRound}) {
   const mappedDepartmentCode = departmentCodeMapping[firstChar]
   const shortName = courseRound.courseRound.shortName && courseRound.courseRound.shortName[0]._
   const sisAccountId = `${mappedDepartmentCode} - Imported course rounds`
-  return {course: wrappedCourseObj, sisAccountId, courseRound:courseRound.courseRound.$, shortName}
+  return {course: wrappedCourseObj, sisAccountId, courseRound: courseRound.courseRound.$, shortName}
 }
 
 function init (canvasApiUrl, canvasapiKey) {
   const CanvasApi = require('kth-canvas-api')
   canvasApi = new CanvasApi(canvasApiUrl, canvasapiKey)
-  subAccounts = canvasApi.getRootAccount()
-    .then(canvasApi.listSubaccounts)
 }
 
 module.exports = {
   getCourseAndCourseRoundFromKopps,
   init,
   createCanvasCourseObject,
-createSimpleCanvasCourseObject}
+  createSimpleCanvasCourseObject}
