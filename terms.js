@@ -1,4 +1,4 @@
 module.exports = {
-  1:'VT',
-  2:'HT'
+  'VT':1,
+  'HT':2
 }
