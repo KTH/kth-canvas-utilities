@@ -1,18 +1,10 @@
 const Promise = require('bluebird')
 const fs = Promise.promisifyAll(require('fs'))
-const log = require('./server/init/logging')
 
 function escapeCsvData (str) {
   str = '' + str
 
-  if (str.includes('"')) {
-    log.warn('oh no! bad data!', str)
-  }
-
-  if (str.includes(',')) {
-    log.info('escaping ', str)
-    str = `"${str}"`
-  }
+  str = `"${str}"`
 
   return str
 }
