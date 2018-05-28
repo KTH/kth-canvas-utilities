@@ -1,3 +1,5 @@
+const csvFile = require('./csvFile')
+const terms = require('./terms')
 const departmentCodeMapping = require('./departmentCodeMapping')
 const moment = require('moment')
 const Promise = require('bluebird')
@@ -103,4 +105,5 @@ module.exports = {
   init,
   createCanvasCourseObject,
   createSimpleCanvasCourseObject,
-  ...require('./csvFile')}
+  csvFile,
+  terms}
