@@ -106,4 +106,5 @@ module.exports = {
   createCanvasCourseObject,
   createSimpleCanvasCourseObject,
   csvFile,
-  terms}
+  terms,
+  departmentCodeMapping}
