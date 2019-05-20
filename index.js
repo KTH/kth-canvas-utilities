@@ -3,4 +3,4 @@ const terms = require('./terms')
 
 module.exports = {
   csvFile,
-  terms}
+  terms }
