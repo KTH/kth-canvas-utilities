@@ -17,10 +17,8 @@
   },
   "homepage": "https://github.com/KTH/kth-canvas-utilities#readme",
   "dependencies": {
-    "bluebird": "^3.5.3",
+    "bluebird": "^3.5.4",
     "moment": "^2.24.0",
-    "request": "^2.79.0",
-    "request-promise": "^4.1.1",
     "xml2js": "^0.4.17"
   }
 }
